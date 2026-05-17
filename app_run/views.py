@@ -1,7 +1,9 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.views import APIView
 
 from django.conf import settings
@@ -18,17 +20,29 @@ def company_details(request):
                      "contacts": settings.CONTACTS}, status=status.HTTP_200_OK)
 
 
+class RunPagination(PageNumberPagination):
+        page_size = 0
+        page_size_query_param = 'size'
+        max_page_size = 50
+
+
 class RunViewSet(viewsets.ModelViewSet):
     queryset = Run.objects.select_related('athlete').all()
     serializer_class = RunSerializer
+
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ['status', 'athlete']
+    ordering_fields = ['created_at']
+    pagination_class = RunPagination
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.filter(is_superuser=False)
     serializer_class = UserSerializer
 
-    filter_backends = [SearchFilter]
-    search_fields = ['first_name', 'last_name']
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ['first_name', 'last_name']
+    ordering_fields = ['date_joined']
 
     def get_queryset(self):
         qs = self.queryset
@@ -38,6 +52,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         elif type == 'athlete':
             qs = qs.filter(is_staff=False)
         return qs
+
 
 class BaseRunAction(APIView):
     def get_run(self, id):
