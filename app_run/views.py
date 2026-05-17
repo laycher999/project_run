@@ -54,10 +54,15 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         qs = self.queryset
         type = self.request.query_params.get('type', None)
+        runs_finished = self.request.query_params.get('runs_finished', None)
+
         if type == 'coach':
             qs = qs.filter(is_staff=True)
         elif type == 'athlete':
             qs = qs.filter(is_staff=False)
+
+        if runs_finished:
+            qs = qs.count()
         return qs
 
 
