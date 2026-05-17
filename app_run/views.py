@@ -21,9 +21,15 @@ def company_details(request):
 
 
 class RunPagination(PageNumberPagination):
-        page_size = 0
-        page_size_query_param = 'size'
-        max_page_size = 50
+    page_size = 0
+    page_size_query_param = 'size'
+    max_page_size = 50
+
+
+class UserPagination(PageNumberPagination):
+    page_size = 0
+    page_size_query_param = 'size'
+    max_page_size = 50
 
 
 class RunViewSet(viewsets.ModelViewSet):
@@ -43,6 +49,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['first_name', 'last_name']
     ordering_fields = ['date_joined']
+    pagination_class = UserPagination
 
     def get_queryset(self):
         qs = self.queryset
