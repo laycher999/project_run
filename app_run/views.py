@@ -57,6 +57,11 @@ class RunStart(BaseRunAction):
         if run.status != Run.RunStatus.INIT:
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
+
+    def post(self, response, id):
+        run = self.get_run(id)
+
+        data = {'status': run.status}
         run.status = Run.RunStatus.IN_PROGRESS
         run.save()
         data['status'] = Run.RunStatus.IN_PROGRESS
@@ -79,3 +84,13 @@ class RunStop(BaseRunAction):
         data['status'] = Run.RunStatus.FINISHED
         return Response(data, status=status.HTTP_200_OK)
 
+
+    def post(self, response, id):
+        run = self.get_run(id)
+
+        data = {'status': run.status}
+        run.status = Run.RunStatus.FINISHED
+        run.save()
+        data['status'] = Run.RunStatus.FINISHED
+
+        return Response(data, status=status.HTTP_200_OK)
