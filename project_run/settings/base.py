@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 
+from django.conf.global_settings import INTERNAL_IPS
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -39,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'debug_toolbar',
 
     'app_run',
 ]
@@ -50,6 +53,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'project_run.urls'
@@ -118,3 +123,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 COMPANY_NAME = "Бегунок"
 SLOGAN = "Меньше страха - больше бега!"
 CONTACTS = "город Краснознаменск, улица Связистов 5"
+
+INTERNAL_IPS = ['127.0.0.1']
