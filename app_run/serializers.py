@@ -19,7 +19,6 @@ class AthleteSerializer(serializers.ModelSerializer):
 
 class RunSerializer(serializers.ModelSerializer):
     athlete_data = AthleteSerializer(source='athlete', read_only=True)
-
     class Meta:
         model = Run
         fields = '__all__'

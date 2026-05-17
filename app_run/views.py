@@ -2,11 +2,21 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
+from rest_framework.views import APIView
 
 from django.conf import settings
-
+from django.http import Http404, HttpResponseBadRequest, BadHeaderError
 from .serializers import RunSerializer, UserSerializer
 from .models import Run, User
+
+
+@api_view(['GET'])
+def company_details(request):
+    return Response(
+        {"company_name": settings.COMPANY_NAME,
+                     "slogan": settings.SLOGAN,
+                     "contacts": settings.CONTACTS}, status=status.HTTP_200_OK)
+
 
 class RunViewSet(viewsets.ModelViewSet):
     queryset = Run.objects.select_related('athlete').all()
@@ -29,9 +39,33 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
             qs = qs.filter(is_staff=False)
         return qs
 
-@api_view(['GET'])
-def company_details(request):
-    return Response(
-        {"company_name": settings.COMPANY_NAME,
-                     "slogan": settings.SLOGAN,
-                     "contacts": settings.CONTACTS}, status=status.HTTP_200_OK)
+
+class RunStart(APIView):
+    def get(self, request, id):
+        runs = Run.objects.filter(id=id)
+        if not runs:
+            raise Http404
+
+        run = runs[0]
+        if run.status in ['IN_PROGRESS', 'FINISHED']:
+            return Response({'status': run.status}, status=status.HTTP_400_BAD_REQUEST)
+
+        if run.status == 'INIT':
+            runs.update(status='IN_PROGRESS')
+            return Response({'id': id, 'status': 'Run is started.'}, status=status.HTTP_200_OK)
+
+
+class RunStop(APIView):
+    def get(self, request, id):
+        runs = Run.objects.filter(id=id)
+        if not runs:
+            raise Http404
+
+        run = runs[0]
+        if run.status in ['INIT', 'FINISHED']:
+            return Response({'status': run.status}, status=status.HTTP_400_BAD_REQUEST)
+
+        if run.status == 'IN_PROGRESS':
+            runs.update(status='FINISHED')
+            return Response({'id': id, 'status': 'Run finished.'}, status=status.HTTP_200_OK)
+
