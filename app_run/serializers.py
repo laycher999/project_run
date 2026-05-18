@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Run, User, AthleteInfo
+from .models import Run, User, AthleteInfo, Challenges
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -17,10 +17,12 @@ class UserSerializer(serializers.ModelSerializer):
         count = Run.objects.filter(athlete_id=obj.id).filter(status='finished').count()
         return count
 
+
 class AthleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'last_name', 'first_name']
+
 
 class AthleteInfoSerializer(serializers.ModelSerializer):
     user_id = serializers.SerializerMethodField()
@@ -37,3 +39,9 @@ class RunSerializer(serializers.ModelSerializer):
     class Meta:
         model = Run
         fields = '__all__'
+
+
+class ChallengesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Challenges
+        fields = ['full_name', 'user']

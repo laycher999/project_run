@@ -8,8 +8,8 @@ from rest_framework.views import APIView
 
 from django.conf import settings
 from django.http import Http404
-from .serializers import RunSerializer, UserSerializer, AthleteInfoSerializer
-from .models import Run, User, AthleteInfo
+from .serializers import RunSerializer, UserSerializer, AthleteInfoSerializer, ChallengesSerializer
+from .models import Run, User, AthleteInfo, Challenges
 
 
 @api_view(['GET'])
@@ -127,6 +127,14 @@ def AthleteInfoViewSet(request, user_id):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class ChallengesViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Challenges.objects.all()
+    serializer_class = ChallengesSerializer
+
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ['athlete']
+    #ordering_fields = ['created_at']
+    #pagination_class = RunPagination
 
 
 
