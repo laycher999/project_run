@@ -36,19 +36,6 @@ class AthleteInfoSerializer(serializers.ModelSerializer):
         return obj.user.id
 
 
-class RunSerializer(serializers.ModelSerializer):
-    athlete_data = AthleteSerializer(source='athlete', read_only=True)
-    class Meta:
-        model = Run
-        fields = '__all__'
-
-
-class ChallengesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Challenges
-        fields = ['full_name', 'athlete']
-
-
 class PositionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Positions
@@ -80,3 +67,18 @@ class PositionsSerializer(serializers.ModelSerializer):
         if not self.cords_range(value, cords_range):
             raise serializers.ValidationError(f'Values must be in {cords_range} range')
         return value
+
+
+class RunSerializer(serializers.ModelSerializer):
+    athlete_data = AthleteSerializer(source='athlete', read_only=True)
+    class Meta:
+        model = Run
+        fields = '__all__'
+
+
+class ChallengesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Challenges
+        fields = ['full_name', 'athlete']
+
+

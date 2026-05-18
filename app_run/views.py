@@ -1,4 +1,9 @@
+from typing import List
+
 from django_filters.rest_framework import DjangoFilterBackend
+from django.conf import settings
+from django.http import Http404
+
 from rest_framework import viewsets, status, serializers
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
@@ -6,10 +11,10 @@ from rest_framework.response import Response
 from rest_framework.filters import OrderingFilter
 from rest_framework.views import APIView
 
-from django.conf import settings
-from django.http import Http404
 from .serializers import RunSerializer, UserSerializer, AthleteInfoSerializer, ChallengesSerializer, PositionsSerializer
 from .models import Run, User, AthleteInfo, Challenges, Positions
+
+from geopy.distance import geodesic
 
 
 @api_view(['GET'])
@@ -85,6 +90,17 @@ class RunStartViewSet(BaseRunAction):
 
 
 class RunStopViewSet(BaseRunAction):
+    def score_run_distance(self, run_id):
+        positions = Positions.objects.filter(run=run_id)
+        total = 0
+        for i, pos in enumerate(positions):
+            if i == len(positions)-1:
+                continue
+            cords1 = (pos.latitude, pos.longitude)
+            cords2 = (positions[i+1].latitude, positions[i+1].longitude)
+            total += geodesic(cords1, cords2).kilometers
+        return total
+
     def post(self, response, run_id):
         runs = self.get_run(run_id)
 
@@ -95,6 +111,7 @@ class RunStopViewSet(BaseRunAction):
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
         run.status = Run.RunStatus.FINISHED
+        run.distance = self.score_run_distance(run.id)
         run.save()
         data['status'] = Run.RunStatus.FINISHED
 
