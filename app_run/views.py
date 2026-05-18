@@ -107,14 +107,14 @@ def AthleteInfoViewSet(request, user_id):
     if user == None:
         raise Http404
 
-    athleteinfo, created = AthleteInfo.objects.get_or_create(user=user, weight='', goals='')
+    athleteinfo, created = AthleteInfo.objects.get_or_create(user=user, defaults={'weight':'', 'goals':''})
 
     if request.method == 'GET':
         serializer = AthleteInfoSerializer(athleteinfo)
         return Response(serializer.data)
 
     elif request.method == 'PUT':
-        serializer = AthleteInfoSerializer(user, data=request.data)
+        serializer = AthleteInfoSerializer(athleteinfo, data=request.data)
 
         weight = int(request.data.get('weight'))
         if weight <= 0 or weight > 900:
