@@ -54,21 +54,31 @@ class PositionsSerializer(serializers.ModelSerializer):
         model = Positions
         fields = '__all__'
 
+    @staticmethod
+    def cords_range(value, cords_range):
+        x, y = cords_range
+        if value < x or value > y:
+            return False
+        return True
+
+
     def validate_run(self, value):
         if value.status != 'in_progress':
             raise serializers.ValidationError('Run in init or finished status')
         return value
 
-    @staticmethod
-    def cords_range(value, cords_range):
-        x, y = cords_range
-        if value <= x or value >= y:
-            return False
-        return True
 
     def validate(self, data):
         latitude = round(data['latitude'], 4)
         longitude = round(data['longitude'], 4)
-        if not self.cords_range(latitude, (-90, 90)) or not self.cords_range(longitude, (-180, 180)):
-            raise serializers.ValidationError("Values not in available range.")
+        errors = {}
+        if not self.cords_range(latitude, (-90, 90)):
+            errors['latitude'] = 'Values not in available range (-90, 90)'
+
+        if not self.cords_range(longitude, (-180, 180)):
+            errors['longitude'] = 'Values not in available range (-180, 180)'
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
         return data

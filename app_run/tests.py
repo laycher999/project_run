@@ -7,4 +7,4 @@ def cords_range(value, cords_range):
         return False
     return True
 
-print(cords_range(555, (-90, 90)))
+print(cords_range(90, (-90, 90)))
