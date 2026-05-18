@@ -117,7 +117,7 @@ def AthleteInfoViewSet(request, user_id):
         serializer = AthleteInfoSerializer(athleteinfo, data=request.data)
 
         if serializer.is_valid():
-            weight = request.data.get('weight')
+            weight = serializer.validated_data['weight']
             if weight <= 0 or weight >= 900:
                 return Response({'Error': 'Weight must be > 0 and < 900'}, status=status.HTTP_400_BAD_REQUEST)
 
