@@ -92,7 +92,6 @@ class RunStop(BaseRunAction):
         data = {'status': run.status}
 
         if run.status != Run.RunStatus.IN_PROGRESS:
-            print('Hello')
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
         run.status = Run.RunStatus.FINISHED
