@@ -17,5 +17,5 @@ urlpatterns = [
     path('api/company_details/', company_details),
     path('api/runs/<int:id>/start/', RunStartViewSet.as_view()),
     path('api/runs/<int:id>/stop/', RunStopViewSet.as_view()),
-    path('api/athleteinfo/<int:id>/', AthleteInfoViewSet.as_view())
+    path('api/athleteinfo/<int:user_id>/', AthleteInfoViewSet)
     ] + debug_toolbar_urls()

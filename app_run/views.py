@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 from django.conf import settings
 from django.http import Http404
-from .serializers import RunSerializer, UserSerializer
+from .serializers import RunSerializer, UserSerializer, AthleteInfoSerializer
 from .models import Run, User, AthleteInfo
 
 
@@ -100,19 +100,33 @@ class RunStopViewSet(BaseRunAction):
         return Response(data, status=status.HTTP_200_OK)
 
 
-class AthleteInfoViewSet(APIView):
-    def get(self, response, id):
-        if not User.objects.filter(id):
-            raise Http404
+@api_view(['PUT', 'GET'])
+def AthleteInfoViewSet(request, user_id):
+    user = User.objects.filter(id=user_id).select_related('athleteinfo').first()
 
-        athleteinfo, created = AthleteInfo.objects.filter(user_id=id)
-        if created is None:
-            return self.put(response, id)
+    if user == None:
+        raise Http404
 
-        return Response(athleteinfo, status=status.HTTP_201_CREATED)
+    athleteinfo, created = AthleteInfo.objects.get_or_create(user=user, weight='', goals='')
 
-    def put(self, response, id):
-        queryset = AthleteInfo.objects.filter(id)
+    if request.method == 'GET':
+        serializer = AthleteInfoSerializer(athleteinfo)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        serializer = AthleteInfoSerializer(user, data=request.data)
+
+        weight = int(request.data.get('weight'))
+        if weight <= 0 or weight > 900:
+            return Response({'Error': 'Weight must be > 0 and < 900' }, status=status.HTTP_400_BAD_REQUEST)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 
