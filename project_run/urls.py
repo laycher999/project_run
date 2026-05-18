@@ -11,7 +11,7 @@ router = DefaultRouter()
 routes = [
            ('runs', RunViewSet),
            ('users', UserViewSet),
-           ('challenges', ChallengesAViewSet)
+           ('challenges', ChallengesViewSet)
            ]
 for prefix, viewset in routes:
     router.register(f'api/{prefix}', viewset)
