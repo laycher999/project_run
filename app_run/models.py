@@ -22,5 +22,5 @@ class AthleteInfo(models.Model):
 
 class Challenge(models.Model):
     full_name = models.TextField(max_length=255)
-    finished = models.BooleanField
+    is_finished = models.BooleanField
     athlete = models.ForeignKey(User, on_delete=models.CASCADE)
