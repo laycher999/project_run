@@ -68,17 +68,15 @@ class PositionsSerializer(serializers.ModelSerializer):
         return value
 
 
-    def validate(self, data):
-        latitude = round(data['latitude'], 4)
-        longitude = round(data['longitude'], 4)
-        errors = {}
-        if not self.cords_range(latitude, (-90, 90)):
-            errors['latitude'] = 'Values not in available range (-90, 90)'
+    def validate_latitude(self, value):
+        cords_range = (-90, 90)
+        if not self.cords_range(value, cords_range):
+            raise serializers.ValidationError(f'Values must be in {cords_range} range')
+        return value
 
-        if not self.cords_range(longitude, (-180, 180)):
-            errors['longitude'] = 'Values not in available range (-180, 180)'
 
-        if errors:
-            raise serializers.ValidationError(errors)
-
-        return data
+    def validate_longitude(self, value):
+        cords_range = (-180, 180)
+        if not self.cords_range(value, cords_range):
+            raise serializers.ValidationError(f'Values must be in {cords_range} range')
+        return value
