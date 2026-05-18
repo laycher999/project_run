@@ -24,11 +24,12 @@ class AthleteSerializer(serializers.ModelSerializer):
 
 class AthleteInfoSerializer(serializers.ModelSerializer):
     class Meta:
-        pass
+        model = AthleteInfo
+        fields = '__all__'
 
 
 class RunSerializer(serializers.ModelSerializer):
     athlete_data = AthleteSerializer(source='athlete', read_only=True)
     class Meta:
-        model = AthleteInfo
+        model = Run
         fields = '__all__'

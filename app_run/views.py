@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from django.conf import settings
 from django.http import Http404
 from .serializers import RunSerializer, UserSerializer
-from .models import Run, User
+from .models import Run, User, AthleteInfo
 
 
 @api_view(['GET'])
@@ -69,7 +69,7 @@ class BaseRunAction(APIView):
         return run
 
 
-class RunStart(BaseRunAction):
+class RunStartViewSet(BaseRunAction):
     def post(self, response, id):
         run = self.get_run(id)
 
@@ -85,7 +85,7 @@ class RunStart(BaseRunAction):
         return Response(data, status=status.HTTP_200_OK)
 
 
-class RunStop(BaseRunAction):
+class RunStopViewSet(BaseRunAction):
     def post(self, response, id):
         run = self.get_run(id)
 
@@ -98,4 +98,22 @@ class RunStop(BaseRunAction):
         run.save()
         data['status'] = Run.RunStatus.FINISHED
         return Response(data, status=status.HTTP_200_OK)
+
+
+class AthleteInfoViewSet(APIView):
+    def get(self, response, id):
+        if not User.objects.filter(id):
+            raise Http404
+
+        athleteinfo, created = AthleteInfo.objects.filter(user_id=id)
+        if created is None:
+            return self.put(response, id)
+
+        return Response(athleteinfo, status=status.HTTP_201_CREATED)
+
+    def put(self, response, id):
+        queryset = AthleteInfo.objects.filter(id)
+
+
+
 
