@@ -29,7 +29,7 @@ class AthleteInfoSerializer(serializers.ModelSerializer):
         fields = ['goals', 'weight', 'user_id']
 
     def get_user_id(self, obj):
-        return obj.id
+        return obj.user.id
 
 
 class RunSerializer(serializers.ModelSerializer):
