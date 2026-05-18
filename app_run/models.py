@@ -7,6 +7,7 @@ class Run(models.Model):
         INIT = "init", "Инициализация забега"
         IN_PROGRESS = "in_progress", "Забег в процессе"
         FINISHED = "finished", "Забег окончен"
+
     athlete = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     comment = models.TextField(max_length=255)

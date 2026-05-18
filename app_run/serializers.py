@@ -22,6 +22,9 @@ class AthleteSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'last_name', 'first_name']
 
+class AthleteInfoSerializer(serializers.ModelSerializer):
+    pass
+
 
 class RunSerializer(serializers.ModelSerializer):
     athlete_data = AthleteSerializer(source='athlete', read_only=True)
