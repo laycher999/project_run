@@ -114,6 +114,7 @@ class RunStopViewSet(BaseRunAction):
         run.distance = self.score_run_distance(run.id)
         run.save()
         data['status'] = Run.RunStatus.FINISHED
+        data['distance'] = run.distance
 
         # Выполнение челенджа за 10 законченных забегов
         total_runs = Run.objects.filter(athlete=run.athlete).filter(status='finished').count()
