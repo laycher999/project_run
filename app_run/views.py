@@ -95,15 +95,18 @@ class RunStopViewSet(BaseRunAction):
         if run.status != Run.RunStatus.IN_PROGRESS:
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
-        #Выполнение челенджа за 10 законченных забегов
+
+
+        run.status = Run.RunStatus.FINISHED
+        run.save()
+        data['status'] = Run.RunStatus.FINISHED
+
+        # Выполнение челенджа за 10 законченных забегов
         total_runs = Run.objects.filter(athlete=run.athlete).filter(status='finished').count()
         if total_runs == 10:
             Challenges.objects.get_or_create(full_name="Сделай 10 Забегов!", athlete=run.athlete)
             data['Achievement!'] = 'Challenge: do 10 runs'
 
-        run.status = Run.RunStatus.FINISHED
-        run.save()
-        data['status'] = Run.RunStatus.FINISHED
         return Response(data, status=status.HTTP_200_OK)
 
 
