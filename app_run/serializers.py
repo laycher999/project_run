@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Run, User
+from .models import Run, User, AthleteInfo
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -30,5 +30,5 @@ class AthleteInfoSerializer(serializers.ModelSerializer):
 class RunSerializer(serializers.ModelSerializer):
     athlete_data = AthleteSerializer(source='athlete', read_only=True)
     class Meta:
-        model = Run
+        model = AthleteInfo
         fields = '__all__'
