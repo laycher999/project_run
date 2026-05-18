@@ -3,11 +3,11 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
-from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.filters import OrderingFilter
 from rest_framework.views import APIView
 
 from django.conf import settings
-from django.http import Http404, HttpResponseBadRequest, BadHeaderError
+from django.http import Http404
 from .serializers import RunSerializer, UserSerializer
 from .models import Run, User
 
