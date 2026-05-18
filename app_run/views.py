@@ -107,7 +107,9 @@ def AthleteInfoViewSet(request, user_id):
     if user == None:
         raise Http404
 
-    athleteinfo, created = AthleteInfo.objects.get_or_create(user=user, defaults={'weight':'', 'goals':''})
+    athleteinfo, created = AthleteInfo.objects.get_or_create(user=user,
+                                                             defaults=
+                                                            {'weight': None, 'goals': None},)
 
     if request.method == 'GET':
         serializer = AthleteInfoSerializer(athleteinfo)
