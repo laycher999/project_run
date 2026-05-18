@@ -62,7 +62,7 @@ class PositionsSerializer(serializers.ModelSerializer):
     @staticmethod
     def cords_range(value, cords_range):
         x, y = cords_range
-        if value < x or value > y:
+        if value <= x or value >= y:
             return False
         return True
 
