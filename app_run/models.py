@@ -19,3 +19,8 @@ class AthleteInfo(models.Model):
     weight = models.IntegerField(blank=True,null=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
+
+class Challenge(models.Model):
+    full_name = models.TextField(max_length=255)
+    finished = models.BooleanField
+    athlete = models.ForeignKey(User, on_delete=models.CASCADE)
