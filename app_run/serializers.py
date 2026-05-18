@@ -44,4 +44,4 @@ class RunSerializer(serializers.ModelSerializer):
 class ChallengesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Challenges
-        fields = ['full_name', 'user']
+        fields = ['full_name', 'athlete']

@@ -61,18 +61,17 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class BaseRunAction(APIView):
-    def get_run(self, id):
-        run = Run.objects.filter(id=id).first()
-        if not run:
+    def get_run(self, run_id):
+        runs = Run.objects.filter(id=run_id)
+        if not runs:
             raise Http404
-
-        return run
+        return runs
 
 
 class RunStartViewSet(BaseRunAction):
-    def post(self, response, id):
-        run = self.get_run(id)
-
+    def post(self, response, run_id):
+        runs = self.get_run(run_id)
+        run = runs[0]
         data = {'status': run.status}
 
         if run.status != Run.RunStatus.INIT:
@@ -86,13 +85,21 @@ class RunStartViewSet(BaseRunAction):
 
 
 class RunStopViewSet(BaseRunAction):
-    def post(self, response, id):
-        run = self.get_run(id)
+    def post(self, response, run_id):
+        runs = self.get_run(run_id)
 
+
+        run = runs[0]
         data = {'status': run.status}
 
         if run.status != Run.RunStatus.IN_PROGRESS:
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
+        #Выполнение челенджа за 10 законченных забегов
+        total_runs = Run.objects.filter(athlete=run.athlete).count()
+        if total_runs == 10:
+            Challenges.objects.get_or_create(full_name="Сделай 10 Забегов!", athlete=run.athlete)
+            data['Achievement!'] = 'Challenge: do 10 runs'
 
         run.status = Run.RunStatus.FINISHED
         run.save()
