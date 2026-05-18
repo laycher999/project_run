@@ -1,5 +1,7 @@
-from rest_framework import serializers
-from .models import Run, User, AthleteInfo, Challenges
+from rest_framework import serializers, status
+from rest_framework.response import Response
+
+from .models import Run, User, AthleteInfo, Challenges, Positions
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -45,3 +47,28 @@ class ChallengesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Challenges
         fields = ['full_name', 'athlete']
+
+
+class PositionsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Positions
+        fields = '__all__'
+
+    def validate_run(self, value):
+        if value.status != 'in_progress':
+            raise serializers.ValidationError('Run in init or finished status')
+        return value
+
+    @staticmethod
+    def cords_range(value, cords_range):
+        x, y = cords_range
+        if value < x or value > y:
+            return False
+        return True
+
+    def validate(self, data):
+        latitude = round(data['latitude'], 4)
+        longitude = round(data['longitude'], 4)
+        if not self.cords_range(latitude, (-90, 90)) or not self.cords_range(longitude, (-180, 180)):
+            raise serializers.ValidationError("Values not in available range.")
+        return data

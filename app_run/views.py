@@ -1,5 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, serializers
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -8,8 +8,8 @@ from rest_framework.views import APIView
 
 from django.conf import settings
 from django.http import Http404
-from .serializers import RunSerializer, UserSerializer, AthleteInfoSerializer, ChallengesSerializer
-from .models import Run, User, AthleteInfo, Challenges
+from .serializers import RunSerializer, UserSerializer, AthleteInfoSerializer, ChallengesSerializer, PositionsSerializer
+from .models import Run, User, AthleteInfo, Challenges, Positions
 
 
 @api_view(['GET'])
@@ -88,14 +88,11 @@ class RunStopViewSet(BaseRunAction):
     def post(self, response, run_id):
         runs = self.get_run(run_id)
 
-
         run = runs[0]
         data = {'status': run.status}
 
         if run.status != Run.RunStatus.IN_PROGRESS:
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
-
-
 
         run.status = Run.RunStatus.FINISHED
         run.save()
@@ -137,7 +134,7 @@ def AthleteInfoViewSet(request, user_id):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ChallengesViewSet(viewsets.ReadOnlyModelViewSet):
+class ChallengesViewSet(viewsets.ModelViewSet):
     queryset = Challenges.objects.all()
     serializer_class = ChallengesSerializer
 
@@ -145,6 +142,17 @@ class ChallengesViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = ['athlete']
     #ordering_fields = ['created_at']
     #pagination_class = RunPagination
+
+
+class PositionsViewSet(viewsets.ModelViewSet):
+    queryset = Positions.objects.all()
+    serializer_class = PositionsSerializer
+
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ['run', 'id']
+
+
+
 
 
 

@@ -4,14 +4,15 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from debug_toolbar.toolbar import debug_toolbar_urls
 
-from app_run.views import company_details, AthleteInfoViewSet, ChallengesViewSet
+from app_run.views import company_details, AthleteInfoViewSet, ChallengesViewSet, PositionsViewSet
 from app_run.views import RunViewSet, UserViewSet, RunStartViewSet, RunStopViewSet
 
 router = DefaultRouter()
 routes = [
            ('runs', RunViewSet),
            ('users', UserViewSet),
-           ('challenges', ChallengesViewSet)
+           ('challenges', ChallengesViewSet),
+           ('positions', PositionsViewSet)
            ]
 for prefix, viewset in routes:
     router.register(f'api/{prefix}', viewset)
@@ -23,4 +24,5 @@ urlpatterns = [
     path('api/runs/<int:run_id>/start/', RunStartViewSet.as_view()),
     path('api/runs/<int:run_id>/stop/', RunStopViewSet.as_view()),
     path('api/athlete_info/<int:user_id>/', AthleteInfoViewSet),
+    #path('api/positions/<int:position_id>/', PositionsViewSet.as_view())
     ] + debug_toolbar_urls()
