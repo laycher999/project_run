@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -13,3 +14,7 @@ class Run(models.Model):
     comment = models.TextField(max_length=255)
     status = models.TextField(choices=RunStatus, default=RunStatus.INIT)
 
+class AthleteInfo(models.Model):
+    goals = models.TextField(max_length=255, default='')
+    weight = models.SmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(900)])
+    id = models.ForeignKey(User, on_delete=models.CASCADE())

@@ -23,7 +23,8 @@ class AthleteSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'last_name', 'first_name']
 
 class AthleteInfoSerializer(serializers.ModelSerializer):
-    pass
+    class Meta:
+        pass
 
 
 class RunSerializer(serializers.ModelSerializer):
