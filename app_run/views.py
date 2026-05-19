@@ -67,16 +67,15 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
 class BaseRunAction(APIView):
     def get_run(self, run_id):
-        runs = Run.objects.filter(id=run_id)
-        if not runs:
+        run = Run.objects.filter(id=run_id).first()
+        if not run:
             raise Http404
-        return runs
+        return run
 
 
 class RunStartViewSet(BaseRunAction):
     def post(self, response, run_id):
-        runs = self.get_run(run_id)
-        run = runs[0]
+        run = self.get_run(run_id)
         data = {'status': run.status}
 
         if run.status != Run.RunStatus.INIT:
@@ -102,9 +101,8 @@ class RunStopViewSet(BaseRunAction):
         return total
 
     def post(self, response, run_id):
-        runs = self.get_run(run_id)
+        run = self.get_run(run_id)
 
-        run = runs[0]
         data = {'status': run.status}
 
         if run.status != Run.RunStatus.IN_PROGRESS:
@@ -119,7 +117,13 @@ class RunStopViewSet(BaseRunAction):
         total_runs = Run.objects.filter(athlete=run.athlete).filter(status='finished').count()
         if total_runs == 10:
             Challenges.objects.get_or_create(full_name="Сделай 10 Забегов!", athlete=run.athlete)
-            data['Achievement!'] = 'Challenge: do 10 runs'
+            data['Challenge complete!!'] = 'Do 10 runs'
+
+        total_distance = sum(Run.objects.filter(status='finished', athlete=run.athlete).values_list('distance', flat=True))
+        if total_distance >= 50:
+            obj, created = Challenges.objects.get_or_create(full_name="Пробеги 50 километров!", athlete=run.athlete)
+            if created:
+                data['Challenge complete!'] = 'Run 50 km!'
 
         return Response(data, status=status.HTTP_200_OK)
 
