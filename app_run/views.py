@@ -121,9 +121,9 @@ class RunStopViewSet(BaseRunAction):
 
         created = Challenges.objects.get(full_name="Пробеги 50 километров!", athlete=run.athlete)
         if not created:
-            data['Challenge complete!'] = 'Run 50 km!'
             total_distance = sum(Run.objects.filter(status='finished', athlete=run.athlete).values_list('distance', flat=True))
             if total_distance >= 50:
+                data['Challenge complete!'] = 'Run 50 km!'
                 Challenges.objects.create(full_name="Пробеги 50 километров!", athlete=run.athlete)
 
 
