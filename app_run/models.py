@@ -30,3 +30,17 @@ class Positions(models.Model):
     run = models.ForeignKey(Run, on_delete=models.CASCADE)
     latitude = models.FloatField()
     longitude = models.FloatField()
+
+
+class CollectibleItem(models.Model):
+    name = models.TextField()
+    uid = models.TextField()
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    picture = models.URLField()
+    value = models.IntegerField()
+
+
+class UploadFile(models.Model):
+    file = models.FileField(upload_to='uploads_model')
+

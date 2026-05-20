@@ -1,7 +1,7 @@
 from rest_framework import serializers, status
 from rest_framework.response import Response
 
-from .models import Run, User, AthleteInfo, Challenges, Positions
+from .models import Run, User, AthleteInfo, Challenges, Positions, CollectibleItem, UploadFile
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -81,4 +81,15 @@ class ChallengesSerializer(serializers.ModelSerializer):
         model = Challenges
         fields = ['full_name', 'athlete']
 
+
+class CollectibleItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CollectibleItem
+        fields = '__all__'
+
+
+class UploadFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UploadFile
+        fields = '__all__'
 

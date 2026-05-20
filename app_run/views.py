@@ -1,5 +1,6 @@
 from typing import List
 
+from django.core.files.uploadedfile import UploadedFile
 from django_filters.rest_framework import DjangoFilterBackend
 from django.conf import settings
 from django.http import Http404
@@ -11,8 +12,9 @@ from rest_framework.response import Response
 from rest_framework.filters import OrderingFilter
 from rest_framework.views import APIView
 
-from .serializers import RunSerializer, UserSerializer, AthleteInfoSerializer, ChallengesSerializer, PositionsSerializer
-from .models import Run, User, AthleteInfo, Challenges, Positions
+from .serializers import RunSerializer, UserSerializer, AthleteInfoSerializer, ChallengesSerializer, \
+    PositionsSerializer, CollectibleItemSerializer, UploadFileSerializer
+from .models import Run, User, AthleteInfo, Challenges, Positions, CollectibleItem, UploadFile
 
 from geopy.distance import geodesic
 
@@ -175,8 +177,26 @@ class PositionsViewSet(viewsets.ModelViewSet):
     filterset_fields = ['run', 'id']
 
 
+class CollectibleItemViewSet(viewsets.ModelViewSet):
+    queryset = CollectibleItem.objects.all()
+    serializer_class = CollectibleItemSerializer
 
 
 
+
+
+@api_view(['POST'])
+def UploadFileViewSet(request):
+    form = UploadFileSerializer(data=request.data)
+    print('*' * 100)
+    print(form)
+    print('*' * 100)
+
+    if form.is_valid():
+        form.save()
+        return Response({'pobeda':'yes'})
+    else:
+        UploadFile()
+    raise Http404
 
 
