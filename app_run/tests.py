@@ -1,12 +1,21 @@
 from django.test import TestCase
+from .serializers import CollectibleItemSerializer
+from .models import CollectibleItem
 
-from .models import Run
+from openpyxl import load_workbook
 
-# Create your tests here.
-def jopa():
-    runs = Run.objects.filter(id=1)
-    total_distance = sum(runs.filter(status='finished').values_list('distance', flat=True))
-    print(total_distance)
-    return total_distance
+wb = load_workbook(filename='/Users/laycher/Downloads/upload_example.xlsx')
 
-print(jopa())
+wb = wb.worksheets[0].values
+failed = []
+
+for i, row in enumerate(wb):
+    if i == 0:
+        continue
+    name, uid, value, latitude, longitude, url = row
+    try:
+        CollectibleItem.objects.create(name=name, uid=uid, value=value, latitude=latitude, longitude=longitude, picture=url)
+    except:
+        failed.append(list(row))
+
+

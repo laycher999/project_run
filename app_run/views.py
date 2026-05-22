@@ -182,19 +182,12 @@ class CollectibleItemViewSet(viewsets.ModelViewSet):
     serializer_class = CollectibleItemSerializer
 
 
-
-
-
 @api_view(['POST'])
 def UploadFileViewSet(request):
     form = UploadFileSerializer(data=request.data)
-    print('*' * 100)
-    print(form)
-    print('*' * 100)
-
     if form.is_valid():
         form.save()
-        return Response({'pobeda':'yes'})
+        return Response(form.data['failed'])
     else:
         UploadFile()
     raise Http404

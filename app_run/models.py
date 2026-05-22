@@ -43,4 +43,4 @@ class CollectibleItem(models.Model):
 
 class UploadFile(models.Model):
     file = models.FileField(upload_to='uploads_model')
-
+    failed = models.TextField(null=True)
