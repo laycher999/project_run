@@ -193,16 +193,26 @@ def UploadFileViewSet(request):
     wb = load_workbook(uploaded_file)
     wb = wb.worksheets[0].values
     failed = []
-
     for i, row in enumerate(wb):
         if i == 0:
             continue
+
         name, uid, value, latitude, longitude, url = row
-        try:
-            CollectibleItem.objects.create(name=name, uid=uid, value=value, latitude=latitude, longitude=longitude,
-                                           picture=url)
-        except:
+
+        data = {
+            'name': name,
+            'uid': uid,
+            'value': value,
+            'latitude': latitude,
+            'longitude': longitude,
+            'picture': url,
+        }
+        serializer = CollectibleItemSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+        else:
             failed.append(list(row))
+
 
     return Response(failed)
 
