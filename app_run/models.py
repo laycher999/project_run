@@ -40,7 +40,3 @@ class CollectibleItem(models.Model):
     picture = models.URLField()
     value = models.IntegerField()
 
-
-class UploadFile(models.Model):
-    file = models.FileField(upload_to='/tmp')
-    failed = models.TextField(null=True)

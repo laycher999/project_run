@@ -3,7 +3,7 @@ from rest_framework.response import Response
 
 from openpyxl import load_workbook
 
-from .models import Run, User, AthleteInfo, Challenges, Positions, CollectibleItem, UploadFile
+from .models import Run, User, AthleteInfo, Challenges, Positions, CollectibleItem
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -90,26 +90,5 @@ class CollectibleItemSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class UploadFileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UploadFile
-        fields = '__all__'
-
-    def validate(self, data):
-        wb = load_workbook(data['file'])
-        wb = wb.worksheets[0].values
-        failed = []
-
-        for i, row in enumerate(wb):
-            if i == 0:
-                continue
-            name, uid, value, latitude, longitude, url = row
-            try:
-                CollectibleItem.objects.create(name=name, uid=uid, value=value, latitude=latitude, longitude=longitude,
-                                               picture=url)
-            except:
-                failed.append(list(row))
-        data['failed'] = failed
-        return data
 
 

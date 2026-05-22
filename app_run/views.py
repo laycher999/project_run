@@ -4,6 +4,7 @@ from django.core.files.uploadedfile import UploadedFile
 from django_filters.rest_framework import DjangoFilterBackend
 from django.conf import settings
 from django.http import Http404
+from openpyxl import load_workbook
 
 from rest_framework import viewsets, status, serializers
 from rest_framework.decorators import api_view
@@ -13,8 +14,8 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.views import APIView
 
 from .serializers import RunSerializer, UserSerializer, AthleteInfoSerializer, ChallengesSerializer, \
-    PositionsSerializer, CollectibleItemSerializer, UploadFileSerializer
-from .models import Run, User, AthleteInfo, Challenges, Positions, CollectibleItem, UploadFile
+    PositionsSerializer, CollectibleItemSerializer
+from .models import Run, User, AthleteInfo, Challenges, Positions, CollectibleItem
 
 from geopy.distance import geodesic
 
@@ -184,12 +185,25 @@ class CollectibleItemViewSet(viewsets.ModelViewSet):
 
 @api_view(['POST'])
 def UploadFileViewSet(request):
-    form = UploadFileSerializer(data=request.data)
-    if form.is_valid():
-        form.save()
-        return Response(form.data['failed'])
-    else:
-        UploadFile()
-    raise Http404
+    uploaded_file = request.FILES.get('file')
+
+    if uploaded_file is None:
+        return Response({'error': 'Файл не передан'}, status=400)
+
+    wb = load_workbook(uploaded_file)
+    wb = wb.worksheets[0].values
+    failed = []
+
+    for i, row in enumerate(wb):
+        if i == 0:
+            continue
+        name, uid, value, latitude, longitude, url = row
+        try:
+            CollectibleItem.objects.create(name=name, uid=uid, value=value, latitude=latitude, longitude=longitude,
+                                           picture=url)
+        except:
+            failed.append(list(row))
+
+    return Response(failed)
 
 
