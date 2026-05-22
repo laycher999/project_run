@@ -105,7 +105,7 @@ class CollectibleItemSerializer(serializers.ModelSerializer):
     def validate_picture(self, value):
         if not value.startswith('https://'):
             raise serializers.ValidationError(f'Incorrect url')
-        raise value
+        return value
 
 
 
