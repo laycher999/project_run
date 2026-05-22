@@ -33,7 +33,7 @@ class Positions(models.Model):
 
 
 class CollectibleItem(models.Model):
-    name = models.TextField(null=False)
+    name = models.TextField()
     uid = models.TextField()
     latitude = models.FloatField()
     longitude = models.FloatField()
