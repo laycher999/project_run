@@ -42,5 +42,5 @@ class CollectibleItem(models.Model):
 
 
 class UploadFile(models.Model):
-    file = models.FileField(upload_to='/tmp/')
+    file = models.FileField(upload_to='/tmp')
     failed = models.TextField(null=True)
