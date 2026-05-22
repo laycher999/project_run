@@ -89,6 +89,26 @@ class CollectibleItemSerializer(serializers.ModelSerializer):
         model = CollectibleItem
         fields = '__all__'
 
+    def validate_latitude(self, value):
+        cords_range = (-90, 90)
+        if not self.cords_range(value, cords_range):
+            raise serializers.ValidationError(f'Values must be in {cords_range} range')
+        return value
+
+
+    def validate_longitude(self, value):
+        cords_range = (-180, 180)
+        if not self.cords_range(value, cords_range):
+            raise serializers.ValidationError(f'Values must be in {cords_range} range')
+        return value
+
+
+    def validate_picture(self, value):
+        if not value.startswith('https://'):
+            raise serializers.ValidationError(f'Incorrect url')
+        raise value
+
+
 
 
 
