@@ -114,8 +114,8 @@ class RunStopViewSet(BaseRunAction):
         return total
 
     def score_run_time(self, positions: QuerySet[Positions]):
-        start = datetime(positions[0])
-        end = datetime(positions[-1])
+        start = datetime(positions[0].date_time)
+        end = datetime(positions[-1].date_time)
         duration = end - start
         return duration.total_seconds()
 
