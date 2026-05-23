@@ -31,7 +31,7 @@ class Positions(models.Model):
     run = models.ForeignKey(Run, on_delete=models.CASCADE)
     latitude = models.FloatField()
     longitude = models.FloatField()
-    date_time = models.DateTimeField()
+    date_time = models.DateTimeField(null=True)
 
 class CollectibleItem(models.Model):
     user = models.ManyToManyField(User)
