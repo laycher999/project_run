@@ -23,7 +23,7 @@ class UserSerializerDetailed(UserSerializer):
     items = serializers.SerializerMethodField()
     class Meta(UserSerializer.Meta):
         model = User
-        fields = UserSerializer.Meta.fields + ['athlete_info','items']
+        fields = UserSerializer.Meta.fields + ['items']
 
     def get_items(self, obj):
         items = CollectibleItem.objects.filter(user=obj)
