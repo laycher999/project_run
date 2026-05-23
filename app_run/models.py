@@ -13,6 +13,7 @@ class Run(models.Model):
     comment = models.TextField(max_length=255)
     status = models.TextField(choices=RunStatus, default=RunStatus.INIT)
     distance = models.FloatField(default=0)
+    run_time_seconds = models.IntegerField()
 
 
 class AthleteInfo(models.Model):
@@ -30,7 +31,7 @@ class Positions(models.Model):
     run = models.ForeignKey(Run, on_delete=models.CASCADE)
     latitude = models.FloatField()
     longitude = models.FloatField()
-
+    date_time = models.DateTimeField()
 
 class CollectibleItem(models.Model):
     user = models.ManyToManyField(User)

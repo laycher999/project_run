@@ -49,9 +49,10 @@ class AthleteInfoSerializer(serializers.ModelSerializer):
 
 
 class PositionsSerializer(serializers.ModelSerializer):
+    date_time = serializers.DateTimeField(fomrat='%Y-%m-%dT%H:%M:%S.%f')
     class Meta:
         model = Positions
-        fields = ['run', 'latitude', 'longitude']
+        fields = ['run', 'latitude', 'longitude', 'date_time']
 
     @staticmethod
     def cords_range(value, cords_range):
