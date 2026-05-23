@@ -27,7 +27,8 @@ class UserSerializerDetailed(UserSerializer):
 
     def get_items(self, obj):
         items = CollectibleItem.objects.filter(user=obj)
-        return items
+        serializer = CollectibleItemSerializer(items, many=True)
+        return serializer.data
 
 
 

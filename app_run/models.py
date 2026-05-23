@@ -32,6 +32,7 @@ class Positions(models.Model):
     longitude = models.FloatField()
 
 
+
 class CollectibleItem(models.Model):
     user = models.ManyToManyField(User)
     name = models.TextField()

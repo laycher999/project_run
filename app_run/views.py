@@ -60,7 +60,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     def get_serializer_class(self):
         # Возвращаем базовый сериализатор для метода list
         if self.action == 'list':
-            return UserViewSet
+            return UserSerializer
         # Возвращаем детализированный сериализатор для метода retrieve
         elif self.action == 'retrieve':
             return UserSerializerDetailed
@@ -69,11 +69,11 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         qs = self.queryset
-        type = self.request.query_params.get('type', None)
+        user_type = self.request.query_params.get('type', None)
 
-        if type == 'coach':
+        if user_type == 'coach':
             qs = qs.filter(is_staff=True)
-        elif type == 'athlete':
+        elif user_type == 'athlete':
             qs = qs.filter(is_staff=False)
         return qs
 
@@ -186,6 +186,21 @@ class PositionsViewSet(viewsets.ModelViewSet):
 
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['run', 'id']
+
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        user = Run.objects.filter(id=data['run'])[0].athlete
+        run_cords = (data['latitude'], data['longitude'])
+        items = CollectibleItem.objects.all()
+        for item in items:
+            print(item)
+            item_cords = (item.latitude, item.longitude)
+            distance = geodesic(run_cords, item_cords).meters
+            if distance <= 100:
+                item.user.add(user)
+
+        return super().create(request, *args, **kwargs)
+
 
 
 class CollectibleItemViewSet(viewsets.ModelViewSet):
