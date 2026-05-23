@@ -23,7 +23,7 @@ class UserSerializerDetailed(UserSerializer):
     items = serializers.SerializerMethodField()
     class Meta(UserSerializer.Meta):
         model = User
-        fields = UserSerializer.Meta.fields + ['items']
+        fields = UserSerializer.Meta.fields + ['athlete_info','items']
 
     def get_items(self, obj):
         items = CollectibleItem.objects.filter(user=obj)
@@ -85,7 +85,7 @@ class RunSerializer(serializers.ModelSerializer):
     athlete_data = AthleteSerializer(source='athlete', read_only=True)
     class Meta:
         model = Run
-        fields = ['athlete', 'created_at', 'comment', 'status', 'distance']
+        fields = ['athlete_data', 'created_at', 'comment', 'status', 'distance']
 
 
 class ChallengesSerializer(serializers.ModelSerializer):
