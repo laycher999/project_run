@@ -13,7 +13,7 @@ class Run(models.Model):
     comment = models.TextField(max_length=255)
     status = models.TextField(choices=RunStatus, default=RunStatus.INIT)
     distance = models.FloatField(default=0)
-    run_time_seconds = models.IntegerField()
+    run_time_seconds = models.IntegerField(null=True)
 
 
 class AthleteInfo(models.Model):
