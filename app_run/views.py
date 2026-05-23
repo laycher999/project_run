@@ -193,12 +193,13 @@ class PositionsViewSet(viewsets.ModelViewSet):
         run_cords = (data['latitude'], data['longitude'])
         items = CollectibleItem.objects.all()
         for item in items:
-            print(item)
-            item_cords = (item.latitude, item.longitude)
-            distance = geodesic(run_cords, item_cords).meters
-            if distance <= 100:
-                item.user.add(user)
-
+            try:
+                item_cords = (item.latitude, item.longitude)
+                distance = geodesic(run_cords, item_cords).meters
+                if distance <= 100:
+                    item.user.add(user)
+            except:
+                pass
         return super().create(request, *args, **kwargs)
 
 
