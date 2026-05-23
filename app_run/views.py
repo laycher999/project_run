@@ -4,7 +4,6 @@ from django.conf import settings
 from django.db.models import QuerySet
 from django.http import Http404
 from openpyxl import load_workbook
-from datetime import datetime
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status, serializers
@@ -114,8 +113,8 @@ class RunStopViewSet(BaseRunAction):
         return total
 
     def score_run_time(self, positions: QuerySet[Positions]):
-        start = datetime(positions[0].date_time)
-        end = datetime(positions[-1].date_time)
+        start = positions[0].date_time
+        end = positions[-1].date_time
         duration = end - start
         return duration.total_seconds()
 
