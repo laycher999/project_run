@@ -47,8 +47,6 @@ class RunViewSet(viewsets.ModelViewSet):
     ordering_fields = ['created_at']
     pagination_class = RunPagination
 
-    def perform_create(self, serializer):
-        serializer.save(athlete=self.request.user)
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
