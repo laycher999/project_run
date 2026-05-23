@@ -48,7 +48,6 @@ class RunViewSet(viewsets.ModelViewSet):
     pagination_class = RunPagination
 
 
-
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.filter(is_superuser=False)
     serializer_class = UserSerializer
