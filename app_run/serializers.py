@@ -49,7 +49,7 @@ class AthleteInfoSerializer(serializers.ModelSerializer):
 
 
 class PositionsSerializer(serializers.ModelSerializer):
-    date_time = serializers.DateTimeField(fomrat='%Y-%m-%dT%H:%M:%S.%f')
+    date_time = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S.%f')
     class Meta:
         model = Positions
         fields = ['run', 'latitude', 'longitude', 'date_time']
