@@ -14,7 +14,7 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.views import APIView
 
 from .serializers import RunSerializer, UserSerializer, AthleteInfoSerializer, ChallengesSerializer, \
-    PositionsSerializer, CollectibleItemSerializer
+    PositionsSerializer, CollectibleItemSerializer, UserSerializerDetailed
 from .models import Run, User, AthleteInfo, Challenges, Positions, CollectibleItem
 
 from geopy.distance import geodesic
@@ -56,6 +56,16 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = ['first_name', 'last_name']
     ordering_fields = ['date_joined']
     pagination_class = UserPagination
+
+    def get_serializer_class(self):
+        # Возвращаем базовый сериализатор для метода list
+        if self.action == 'list':
+            return UserViewSet
+        # Возвращаем детализированный сериализатор для метода retrieve
+        elif self.action == 'retrieve':
+            return UserSerializerDetailed
+        return super().get_serializer_class() # Если ни одно из условий не выполнено, вызываем базовую реализацию
+
 
     def get_queryset(self):
         qs = self.queryset

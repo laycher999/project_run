@@ -33,6 +33,7 @@ class Positions(models.Model):
 
 
 class CollectibleItem(models.Model):
+    user = models.ManyToManyField(User)
     name = models.TextField()
     uid = models.TextField()
     latitude = models.FloatField()

@@ -1,7 +1,4 @@
-from rest_framework import serializers, status
-from rest_framework.response import Response
-
-from openpyxl import load_workbook
+from rest_framework import serializers
 
 from .models import Run, User, AthleteInfo, Challenges, Positions, CollectibleItem
 
@@ -20,6 +17,18 @@ class UserSerializer(serializers.ModelSerializer):
     def get_runs_finished(self, obj):
         count = Run.objects.filter(athlete_id=obj.id).filter(status='finished').count()
         return count
+
+
+class UserSerializerDetailed(UserSerializer):
+    items = serializers.SerializerMethodField()
+    class Meta(UserSerializer.Meta):
+        model = User
+        fields = UserSerializer.fields + ['items']
+
+    def get_items(self, obj):
+        items = CollectibleItem.objects.filter(user=obj)
+        return items
+
 
 
 class AthleteSerializer(serializers.ModelSerializer):
@@ -41,7 +50,7 @@ class AthleteInfoSerializer(serializers.ModelSerializer):
 class PositionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Positions
-        fields = '__all__'
+        fields = ['run', 'latitude', 'longitude']
 
     @staticmethod
     def cords_range(value, cords_range):
@@ -75,7 +84,7 @@ class RunSerializer(serializers.ModelSerializer):
     athlete_data = AthleteSerializer(source='athlete', read_only=True)
     class Meta:
         model = Run
-        fields = '__all__'
+        fields = ['athlete', 'created_at', 'comment', 'status', 'distance']
 
 
 class ChallengesSerializer(serializers.ModelSerializer):
@@ -84,23 +93,11 @@ class ChallengesSerializer(serializers.ModelSerializer):
         fields = ['full_name', 'athlete']
 
 
-class CollectibleItemSerializer(serializers.ModelSerializer):
-    class Meta:
+class CollectibleItemSerializer(PositionsSerializer):
+    class Meta(PositionsSerializer.Meta):
         model = CollectibleItem
-        fields = '__all__'
+        fields = ['name', 'uid', 'latitude', 'longitude', 'value', 'picture']
 
-    def validate_latitude(self, value):
-        cords_range = (-90, 90)
-        if not PositionsSerializer.cords_range(value, cords_range):
-            raise serializers.ValidationError(f'Values must be in {cords_range} range')
-        return value
-
-
-    def validate_longitude(self, value):
-        cords_range = (-180, 180)
-        if not PositionsSerializer.cords_range(value, cords_range):
-            raise serializers.ValidationError(f'Values must be in {cords_range} range')
-        return value
 
     def validate_picture(self, value):
         if not value.startswith('https://'):
