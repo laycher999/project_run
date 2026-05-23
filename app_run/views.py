@@ -1,11 +1,12 @@
 from typing import List
 
-from django.core.files.uploadedfile import UploadedFile
-from django_filters.rest_framework import DjangoFilterBackend
 from django.conf import settings
+from django.db.models import QuerySet
 from django.http import Http404
 from openpyxl import load_workbook
+from datetime import datetime
 
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status, serializers
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
@@ -102,8 +103,7 @@ class RunStartViewSet(BaseRunAction):
 
 
 class RunStopViewSet(BaseRunAction):
-    def score_run_distance(self, run_id):
-        positions = Positions.objects.filter(run=run_id)
+    def score_run_distance(self, positions):
         total = 0
         for i, pos in enumerate(positions):
             if i == len(positions)-1:
@@ -113,8 +113,16 @@ class RunStopViewSet(BaseRunAction):
             total += geodesic(cords1, cords2).kilometers
         return total
 
+    def score_run_time(self, positions: QuerySet[Positions]):
+        start = datetime(positions[0])
+        end = datetime(positions[-1])
+        duration = end - start
+        return duration.total_seconds()
+
     def post(self, response, run_id):
         run = self.get_run(run_id)
+        positions = Positions.objects.filter(run=run_id).order_by('date_time')
+
 
         data = {'status': run.status}
 
@@ -122,9 +130,11 @@ class RunStopViewSet(BaseRunAction):
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
         run.status = Run.RunStatus.FINISHED
-        run.distance = self.score_run_distance(run.id)
+        run.distance = self.score_run_distance(positions)
+        run.run_time_seconds = self.score_run_time(positions)
         run.save()
         data['distance'] = run.distance
+
 
         # Выполнение челенджа за 10 законченных забегов
         total_runs = Run.objects.filter(athlete=run.athlete).filter(status='finished').count()
