@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db.models import QuerySet, Count
+from django.db.models import QuerySet, Count, Q
 from django.http import Http404
 from openpyxl import load_workbook
 
@@ -47,7 +47,7 @@ class RunViewSet(viewsets.ModelViewSet):
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = User.objects.filter(is_superuser=False).annotate(runs_finished=Count('run'))
+    queryset = User.objects.filter(is_superuser=False).annotate(runs_finished=Count('run', filter=Q(run__status='finished')))
     serializer_class = UserSerializer
 
     filter_backends = [DjangoFilterBackend, OrderingFilter]
