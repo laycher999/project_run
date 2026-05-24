@@ -15,7 +15,6 @@ class UserSerializer(serializers.ModelSerializer):
         return 'coach' if obj.is_staff else 'athlete'
 
 
-
 class UserSerializerDetailed(UserSerializer):
     items = serializers.SerializerMethodField()
     class Meta(UserSerializer.Meta):
@@ -26,7 +25,6 @@ class UserSerializerDetailed(UserSerializer):
         items = CollectibleItem.objects.filter(user=obj)
         serializer = CollectibleItemSerializer(items, many=True)
         return serializer.data
-
 
 
 class AthleteSerializer(serializers.ModelSerializer):
