@@ -111,11 +111,13 @@ class RunStopViewSet(BaseRunAction):
         return total
 
     def score_run_time(self, positions: QuerySet[Positions]):
-        start = positions.first().date_time
-        end = positions.last().date_time
-        duration = end - start
-        return duration.total_seconds()
-
+        if positions:
+            start = positions.first().date_time
+            end = positions.last().date_time
+            duration = end - start
+            return duration.total_seconds()
+        else:
+            return None
     def post(self, response, run_id):
         run = self.get_run(run_id)
         positions = Positions.objects.filter(run=run_id).order_by('date_time')
