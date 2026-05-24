@@ -1,12 +1,10 @@
-from typing import List
-
 from django.conf import settings
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Count
 from django.http import Http404
 from openpyxl import load_workbook
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, status, serializers
+from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -49,7 +47,7 @@ class RunViewSet(viewsets.ModelViewSet):
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = User.objects.filter(is_superuser=False)
+    queryset = User.objects.filter(is_superuser=False).annotate(runs_finished=Count('run'))
     serializer_class = UserSerializer
 
     filter_backends = [DjangoFilterBackend, OrderingFilter]

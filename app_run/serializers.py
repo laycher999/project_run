@@ -5,7 +5,7 @@ from .models import Run, User, AthleteInfo, Challenges, Positions, CollectibleIt
 
 class UserSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField()
-    runs_finished = serializers.SerializerMethodField()
+    runs_finished = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = User
@@ -14,9 +14,6 @@ class UserSerializer(serializers.ModelSerializer):
     def get_type(self, obj):
         return 'coach' if obj.is_staff else 'athlete'
 
-    def get_runs_finished(self, obj):
-        count = Run.objects.filter(athlete_id=obj.id).filter(status='finished').count()
-        return count
 
 
 class UserSerializerDetailed(UserSerializer):
