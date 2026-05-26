@@ -131,6 +131,7 @@ class RunStopViewSet(BaseRunAction):
         run.status = Run.RunStatus.FINISHED
         run.distance = self.score_run_distance(positions)
         run.run_time_seconds = self.score_run_time(positions)
+        run.speed = run.distance / run.run_time_seconds / 3600
         run.save()
         data['distance'] = run.distance
 
