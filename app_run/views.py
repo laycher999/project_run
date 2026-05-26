@@ -204,7 +204,8 @@ class PositionsViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         current_position = serializer.validated_data
         run_id = current_position['run'].id
-        positions_in_run = list(Positions.objects.filter(run=run_id))
+        positions_in_run = list(Positions.objects.filter(run=run_id).order_by('date_time'))
+        print(positions_in_run)
         if len(positions_in_run) == 0:
             serializer.save()
             return
