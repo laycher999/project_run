@@ -14,7 +14,7 @@ class Run(models.Model):
     status = models.TextField(choices=RunStatus, default=RunStatus.INIT)
     distance = models.FloatField(default=0)
     run_time_seconds = models.IntegerField(null=True)
-    speed = models.FloatField(null=True)
+    speed = models.FloatField(default=0)
 
 
 class AthleteInfo(models.Model):
@@ -33,7 +33,7 @@ class Positions(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
     date_time = models.DateTimeField(null=True)
-    speed = models.FloatField(null=True)
+    speed = models.FloatField(default=0)
     distance = models.FloatField(default=0)
 
 
