@@ -210,11 +210,11 @@ class PositionsViewSet(viewsets.ModelViewSet):
         current_pos_cords = (current_position['latitude'], current_position['longitude'])
         prev_pos = positions_in_run[-1]
         prev_pos_cords = (prev_pos.latitude, prev_pos.longitude)
-
         runned_distance = geodesic(current_pos_cords, prev_pos_cords)
         runned_time = (current_position['date_time'] - prev_pos.date_time).total_seconds() / 3600
         speed = round(runned_distance.kilometers / runned_time,2)
-        serializer.save(speed=speed)
+        total_distance = runned_distance.km + prev_pos.distance
+        serializer.save(speed=speed, distance=total_distance)
 
     def get_collectible_item(self, data):
         user = Run.objects.filter(id=data['run'])[0].athlete

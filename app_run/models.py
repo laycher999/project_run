@@ -33,6 +33,9 @@ class Positions(models.Model):
     longitude = models.FloatField()
     date_time = models.DateTimeField(null=True)
     speed = models.FloatField(null=True)
+    distance = models.FloatField(default=0)
+
+
 class CollectibleItem(models.Model):
     user = models.ManyToManyField(User)
     name = models.TextField()
