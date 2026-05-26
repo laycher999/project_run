@@ -1,3 +1,4 @@
+from geopy.distance import geodesic
 from rest_framework import serializers
 
 from .models import Run, User, AthleteInfo, Challenges, Positions, CollectibleItem
@@ -47,7 +48,7 @@ class PositionsSerializer(serializers.ModelSerializer):
     date_time = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S.%f')
     class Meta:
         model = Positions
-        fields = ['run', 'latitude', 'longitude', 'date_time']
+        fields = ['run', 'latitude', 'longitude', 'date_time', 'speed']
 
     @staticmethod
     def cords_range(value, cords_range):
@@ -55,7 +56,6 @@ class PositionsSerializer(serializers.ModelSerializer):
         if value < x or value > y:
             return False
         return True
-
 
     def validate_run(self, value):
         if value.status != 'in_progress':

@@ -197,7 +197,26 @@ class PositionsViewSet(viewsets.ModelViewSet):
     filterset_fields = ['run', 'id']
 
     def create(self, request, *args, **kwargs):
-        data = request.data
+        self.get_collectible_item(request.data)
+        return super().create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        current_position = serializer.validated_data
+        run_id = current_position['run'].id
+        positions_in_run = list(Positions.objects.filter(run=run_id))
+        if len(positions_in_run) == 0:
+            serializer.save()
+            return
+        current_pos_cords = (current_position['latitude'], current_position['longitude'])
+        prev_pos = positions_in_run[-1]
+        prev_pos_cords = (prev_pos.latitude, prev_pos.longitude)
+
+        runned_distance = geodesic(current_pos_cords, prev_pos_cords)
+        runned_time = (current_position['date_time'] - prev_pos.date_time).total_seconds() / 3600
+        speed = round(runned_distance.kilometers / runned_time,2)
+        serializer.save(speed=speed)
+
+    def get_collectible_item(self, data):
         user = Run.objects.filter(id=data['run'])[0].athlete
         run_cords = (data['latitude'], data['longitude'])
         items = CollectibleItem.objects.all()
@@ -207,9 +226,10 @@ class PositionsViewSet(viewsets.ModelViewSet):
                 distance = geodesic(run_cords, item_cords).meters
                 if distance <= 100:
                     item.user.add(user)
+                    return True
             except:
                 pass
-        return super().create(request, *args, **kwargs)
+        return False
 
 
 
