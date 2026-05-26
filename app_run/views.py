@@ -107,7 +107,7 @@ class RunStopViewSet(BaseRunAction):
                 continue
             cords1 = (pos.latitude, pos.longitude)
             cords2 = (positions[i+1].latitude, positions[i+1].longitude)
-            total += geodesic(cords1, cords2).kilometers
+            total += geodesic(cords1, cords2)
         return total
 
     def score_run_time(self, positions: QuerySet[Positions]):
@@ -129,9 +129,10 @@ class RunStopViewSet(BaseRunAction):
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
         run.status = Run.RunStatus.FINISHED
-        run.distance = self.score_run_distance(positions)
+        distance = self.score_run_distance(positions)
+        run.distance = distance.kilometers
         run.run_time_seconds = self.score_run_time(positions)
-        run.speed = run.distance / run.run_time_seconds
+        run.speed = distance.m / run.run_time_seconds
         run.save()
         data['distance'] = run.distance
 
