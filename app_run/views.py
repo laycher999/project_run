@@ -107,7 +107,7 @@ class RunStopViewSet(BaseRunAction):
                 continue
             cords1 = (pos.latitude, pos.longitude)
             cords2 = (positions[i+1].latitude, positions[i+1].longitude)
-            total += geodesic(cords1, cords2).kilometers
+            total += geodesic(cords1, cords2)
         return total
 
     def score_run_time(self, positions: QuerySet[Positions]):
@@ -131,7 +131,7 @@ class RunStopViewSet(BaseRunAction):
         run.status = Run.RunStatus.FINISHED
         run.distance = self.score_run_distance(positions)
         run.run_time_seconds = self.score_run_time(positions)
-        run.speed = run.distance / run.run_time_seconds / 3600
+        run.speed = run.distance.m / run.run_time_seconds
         run.save()
         data['distance'] = run.distance
 
@@ -213,8 +213,8 @@ class PositionsViewSet(viewsets.ModelViewSet):
         prev_pos = positions_in_run[-1]
         prev_pos_cords = (prev_pos.latitude, prev_pos.longitude)
         runned_distance = geodesic(current_pos_cords, prev_pos_cords)
-        runned_time = (current_position['date_time'] - prev_pos.date_time).total_seconds() / 3600
-        speed = round(runned_distance.m / runned_time, 2) # V METPAX
+        runned_time = (current_position['date_time'] - prev_pos.date_time).total_seconds()
+        speed = round(runned_distance.m / runned_time, 2) # V METPAX/SEC
         total_distance = round(runned_distance.km + prev_pos.distance, 2) # V KILOMETPAX
         serializer.save(speed=speed, distance=total_distance)
 
