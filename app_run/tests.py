@@ -10,7 +10,8 @@
 #
 #
 
-a = [1,2,3,4,5,6]
-print(a[-2])
-b = []
-print(b is None)
+from geopy.distance import geodesic
+
+
+a = geodesic((50,50), (40,40))
+print(a.kilometers*1000)
