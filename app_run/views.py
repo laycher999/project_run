@@ -15,7 +15,7 @@ from .serializers import RunSerializer, UserSerializer, AthleteInfoSerializer, C
     PositionsSerializer, CollectibleItemSerializer, UserSerializerDetailed
 from .models import Run, User, AthleteInfo, Challenges, Positions, CollectibleItem
 
-from geopy.distance import geodesic
+from geopy.distance import geodesic, Distance
 
 
 @api_view(['GET'])
@@ -100,7 +100,7 @@ class RunStartViewSet(BaseRunAction):
 
 
 class RunStopViewSet(BaseRunAction):
-    def score_run_distance(self, positions):
+    def score_run_distance(self, positions) -> Distance:
         total = 0
         for i, pos in enumerate(positions):
             if i == len(positions)-1:
@@ -130,7 +130,7 @@ class RunStopViewSet(BaseRunAction):
 
         run.status = Run.RunStatus.FINISHED
         distance = self.score_run_distance(positions)
-        run.distance = distance.kilometers
+        run.distance = distance.km
         run.run_time_seconds = self.score_run_time(positions)
         run.speed = distance.m / run.run_time_seconds
         run.save()
