@@ -212,7 +212,7 @@ class PositionsViewSet(viewsets.ModelViewSet):
         current_pos_cords = (current_position['latitude'], current_position['longitude'])
         prev_pos = positions_in_run[-1]
         prev_pos_cords = (prev_pos.latitude, prev_pos.longitude)
-        runned_distance = geodesic(current_pos_cords, prev_pos_cords).km
+        runned_distance = geodesic(current_pos_cords, prev_pos_cords).m
         runned_time = (current_position['date_time'] - prev_pos.date_time).total_seconds() / 3600
         speed = round(runned_distance / runned_time, 2)
         total_distance = round(runned_distance + prev_pos.distance, 2)
