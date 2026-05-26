@@ -212,8 +212,8 @@ class PositionsViewSet(viewsets.ModelViewSet):
         prev_pos_cords = (prev_pos.latitude, prev_pos.longitude)
         runned_distance = geodesic(current_pos_cords, prev_pos_cords)
         runned_time = (current_position['date_time'] - prev_pos.date_time).total_seconds() / 3600
-        speed = round(runned_distance.kilometers / runned_time,2)
-        total_distance = runned_distance.km + prev_pos.distance
+        speed = round(runned_distance.kilometers / runned_time, 2)
+        total_distance = round(runned_distance.km + prev_pos.distance, 2)
         serializer.save(speed=speed, distance=total_distance)
 
     def get_collectible_item(self, data):
