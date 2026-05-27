@@ -48,5 +48,5 @@ class CollectibleItem(models.Model):
 
 
 class Subscribe(models.Model):
-    athlete_id = models.IntegerField(null=False)
-    coach_id = models.IntegerField(null=False)
+    athlete = models.ForeignKey(User, on_delete=models.CASCADE)
+    coach = models.ForeignKey(User, on_delete=models.CASCADE)

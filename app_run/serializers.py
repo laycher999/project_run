@@ -128,7 +128,7 @@ class CollectibleItemSerializer(PositionsSerializer):
 
 class SubscribeSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ['athlete_id', 'coach_id']
+        fields = ['athlete', 'coach']
 
 
 

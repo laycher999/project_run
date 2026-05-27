@@ -164,8 +164,6 @@ class RunStopViewSet(BaseRunAction):
                 Challenges.objects.create(full_name="2 километра за 10 минут!", athlete=run.athlete)
 
 
-
-
         return Response(data, status=status.HTTP_200_OK)
 
 
@@ -221,7 +219,6 @@ class PositionsViewSet(viewsets.ModelViewSet):
         current_position = serializer.validated_data
         run_id = current_position['run'].id
         positions_in_run = list(Positions.objects.filter(run=run_id).order_by('date_time'))
-        print(positions_in_run)
         if len(positions_in_run) == 0:
             serializer.save()
             return
@@ -305,7 +302,7 @@ class SubscribeViewSet(APIView):
         if not athlete or athlete.is_staff:
             return Response('User not found or athlete is coach', status=status.HTTP_400_BAD_REQUEST)
 
-        subscribe, created = Subscribe.objects.get_or_create(athlete_id=athlete_id, coach_id=coach_id)
+        subscribe, created = Subscribe.objects.get_or_create(athlete=athlete, coach_id=coach)
         if not created:
             return Response("Already subbed", status=status.HTTP_400_BAD_REQUEST)
 
