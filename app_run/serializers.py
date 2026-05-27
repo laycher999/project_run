@@ -36,7 +36,8 @@ class AthleteSerializerDetailed(UserSerializerDetailed):
         fields = UserSerializerDetailed.Meta.fields + ['coach']
 
     def get_coach(self, obj):
-        coach_id = Subscribe.objects.filter(athlete_id=obj.id).first().coach_id
+        sub = Subscribe.objects.filter(athlete_id=obj.id).first()
+        coach_id = sub.coach_id if sub else None
         return coach_id
 
 class CoachSerializerDetailed(UserSerializerDetailed):
@@ -46,7 +47,7 @@ class CoachSerializerDetailed(UserSerializerDetailed):
         fields = UserSerializer.Meta.fields + ['athletes']
 
     def get_athletes(self, obj):
-        athletes = Subscribe.objects.filter(coach_id=obj.id).values('athlete_id')
+        athletes = Subscribe.objects.filter(coach_id=obj.id).values_list('athlete_id', flat=True)
         print(athletes)
         return athletes
 
