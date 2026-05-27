@@ -302,7 +302,8 @@ class SubscribeViewSet(APIView):
             return Response('User not found or athlete is coach', status=status.HTTP_400_BAD_REQUEST)
 
         subscribe, created = Subscribe.objects.get_or_create(athlete_id=athlete_id, coach_id=coach_id)
-        if created:
+        print(created)
+        if not created:
             return Response("Already subbed", status=status.HTTP_400_BAD_REQUEST)
 
 
