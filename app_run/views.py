@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db.models import QuerySet, Count, Q
+from django.db.models import QuerySet, Count, Q, Avg
 from django.http import Http404
 from openpyxl import load_workbook
 
@@ -118,13 +118,11 @@ class RunStopViewSet(BaseRunAction):
             return duration.total_seconds()
         else:
             return None
+
     def post(self, response, run_id):
         run = self.get_run(run_id)
         positions = Positions.objects.filter(run=run_id).order_by('date_time')
-
-
         data = {'status': run.status}
-
         if run.status != Run.RunStatus.IN_PROGRESS:
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
@@ -132,7 +130,7 @@ class RunStopViewSet(BaseRunAction):
         distance = self.score_run_distance(positions)
         run.distance = distance
         run.run_time_seconds = self.score_run_time(positions)
-        run.speed = distance*1000 / run.run_time_seconds
+        run.speed = round(positions.aggregate(Avg('speed'))['speed__avg'], 2)
         run.save()
         data['distance'] = run.distance
 
