@@ -141,12 +141,22 @@ class RunStopViewSet(BaseRunAction):
             Challenges.objects.get_or_create(full_name="Сделай 10 Забегов!", athlete=run.athlete)
             data['Challenge complete!!'] = 'Do 10 runs'
 
+        # Челендж 50 км
         created = Challenges.objects.filter(full_name="Пробеги 50 километров!", athlete=run.athlete).exists()
         if not created:
             total_distance = sum(Run.objects.filter(status='finished', athlete=run.athlete).values_list('distance', flat=True))
             if total_distance >= 50:
                 data['Challenge complete!'] = 'Run 50 km!'
                 Challenges.objects.create(full_name="Пробеги 50 километров!", athlete=run.athlete)
+
+        # 2 километра за 10 минут!
+        created = Challenges.objects.filter(full_name="# 2 километра за 10 минут!", athlete=run.athlete).exists()
+        if not created:
+            if run.distance >= 10 and run.run_time_seconds <= 600:
+                data['Challenge complete!'] = 'New'
+                Challenges.objects.create(full_name="2 километра за 10 минут!", athlete=run.athlete)
+
+
 
 
         return Response(data, status=status.HTTP_200_OK)
