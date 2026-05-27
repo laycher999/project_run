@@ -294,10 +294,14 @@ class SubscribeViewSet(APIView):
     def post(self, response, coach_id):
         athlete_id = response.data.get('athlete')
         coach: User = User.objects.filter(id=coach_id).first()
-        if not coach or not coach.is_staff:
+        athlete: User = User.objects.filter(id=athlete_id).first()
+
+        if not coach:
             raise Http404
 
-        athlete: User = User.objects.filter(id=athlete_id).first()
+        if not coach.is_staff:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
         if not athlete or athlete.is_staff:
             return Response('User not found or athlete is coach', status=status.HTTP_400_BAD_REQUEST)
 
@@ -306,5 +310,5 @@ class SubscribeViewSet(APIView):
             return Response("Already subbed", status=status.HTTP_400_BAD_REQUEST)
 
 
-        return Response(f'Athele({athlete_id} subscribed Coach({coach_id})!', status=status.HTTP_200_OK)
+        return Response(f'Athele({athlete_id}) subscribed Coach({coach_id})!', status=status.HTTP_200_OK)
 
