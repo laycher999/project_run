@@ -152,7 +152,7 @@ class RunStopViewSet(BaseRunAction):
         # 2 километра за 10 минут!
         created = Challenges.objects.filter(full_name="# 2 километра за 10 минут!", athlete=run.athlete).exists()
         if not created:
-            if run.distance >= 10 and run.run_time_seconds <= 600:
+            if run.distance >= 2 and run.run_time_seconds <= 600:
                 data['Challenge complete!'] = 'New'
                 Challenges.objects.create(full_name="2 километра за 10 минут!", athlete=run.athlete)
 
