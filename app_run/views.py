@@ -294,8 +294,8 @@ class SubscribeViewSet(APIView):
     def post(self, response, coach_id):
         athlete_id = response.data.get('athlete')
         coach: User = User.objects.filter(id=coach_id).first()
-        # if not coach or not coach.is_staff:
-        #     raise Http404
+        if not coach or not coach.is_staff:
+            raise Http404
 
         athlete: User = User.objects.filter(id=athlete_id).first()
         if not athlete or athlete.is_staff:
