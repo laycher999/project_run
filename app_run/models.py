@@ -46,3 +46,7 @@ class CollectibleItem(models.Model):
     picture = models.URLField()
     value = models.IntegerField()
 
+
+class Subscribe(models.Model):
+    athlete_id = models.IntegerField(null=False)
+    coach_id = models.IntegerField(null=False)
