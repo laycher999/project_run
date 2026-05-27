@@ -5,7 +5,7 @@ from rest_framework.routers import DefaultRouter
 from debug_toolbar.toolbar import debug_toolbar_urls
 
 from app_run.views import company_details, AthleteInfoViewSet, ChallengesViewSet, PositionsViewSet, \
-    CollectibleItemViewSet, UploadFileViewSet
+    CollectibleItemViewSet, UploadFileViewSet, SubscribeViewSet
 from app_run.views import RunViewSet, UserViewSet, RunStartViewSet, RunStopViewSet
 
 router = DefaultRouter()
@@ -26,5 +26,6 @@ urlpatterns = [
     path('api/runs/<int:run_id>/start/', RunStartViewSet.as_view()),
     path('api/runs/<int:run_id>/stop/', RunStopViewSet.as_view()),
     path('api/athlete_info/<int:user_id>/', AthleteInfoViewSet),
-    path('api/upload_file/', UploadFileViewSet)
+    path('api/upload_file/', UploadFileViewSet),
+    path('api/subscribe_to_coach/<int:coach_id>/', SubscribeViewSet.as_view())
     ] + debug_toolbar_urls()

@@ -12,8 +12,9 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.views import APIView
 
 from .serializers import RunSerializer, UserSerializer, AthleteInfoSerializer, ChallengesSerializer, \
-    PositionsSerializer, CollectibleItemSerializer, UserSerializerDetailed
-from .models import Run, User, AthleteInfo, Challenges, Positions, CollectibleItem
+    PositionsSerializer, CollectibleItemSerializer, UserSerializerDetailed, CoachSerializerDetailed, \
+    AthleteSerializerDetailed
+from .models import Run, User, AthleteInfo, Challenges, Positions, CollectibleItem, Subscribe
 
 from geopy.distance import geodesic, Distance
 
@@ -61,7 +62,13 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
             return UserSerializer
         # Возвращаем детализированный сериализатор для метода retrieve
         elif self.action == 'retrieve':
-            return UserSerializerDetailed
+            user_id = self.kwargs.get('pk')
+            user = User.objects.filter(id=user_id).first()
+            if user and user.is_staff:
+                return CoachSerializerDetailed
+            else:
+                print('JOPA')
+                return AthleteSerializerDetailed
         return super().get_serializer_class() # Если ни одно из условий не выполнено, вызываем базовую реализацию
 
 
@@ -282,4 +289,22 @@ def UploadFileViewSet(request):
 
     return Response(failed)
 
+
+class SubscribeViewSet(APIView):
+    def post(self, response, coach_id):
+        athlete_id = response.data.get('athlete')
+        coach: User = User.objects.filter(id=coach_id).first()
+        # if not coach or not coach.is_staff:
+        #     raise Http404
+
+        athlete: User = User.objects.filter(id=athlete_id).first()
+        if not athlete or athlete.is_staff:
+            return Response('User not found or athlete is coach', status=status.HTTP_400_BAD_REQUEST)
+
+        subscribe, created = Subscribe.objects.get_or_create(athlete_id=athlete_id, coach_id=coach_id)
+        if created:
+            return Response("Already subbed", status=status.HTTP_400_BAD_REQUEST)
+
+
+        return Response(f'Athele({athlete_id} subscribed Coach({coach_id})!', status=status.HTTP_200_OK)
 

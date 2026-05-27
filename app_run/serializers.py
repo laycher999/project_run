@@ -1,7 +1,7 @@
 from geopy.distance import geodesic
 from rest_framework import serializers
 
-from .models import Run, User, AthleteInfo, Challenges, Positions, CollectibleItem
+from .models import Run, User, AthleteInfo, Challenges, Positions, CollectibleItem, Subscribe
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -26,6 +26,29 @@ class UserSerializerDetailed(UserSerializer):
         items = CollectibleItem.objects.filter(user=obj)
         serializer = CollectibleItemSerializer(items, many=True)
         return serializer.data
+
+
+
+class AthleteSerializerDetailed(UserSerializerDetailed):
+    coach = serializers.SerializerMethodField()
+    class Meta(UserSerializer.Meta):
+        model = User
+        fields = UserSerializerDetailed.Meta.fields + ['coach']
+
+    def get_coach(self, obj):
+        coach_id = Subscribe.objects.filter(athlete_id=obj.id).first().coach_id
+        return coach_id
+
+class CoachSerializerDetailed(UserSerializerDetailed):
+    athletes = serializers.SerializerMethodField()
+    class Meta(UserSerializer.Meta):
+        model = User
+        fields = UserSerializer.Meta.fields + ['athletes']
+
+    def get_athletes(self, obj):
+        athletes = Subscribe.objects.filter(coach_id=obj.id).values('athlete_id')
+        print(athletes)
+        return athletes
 
 
 class AthleteSerializer(serializers.ModelSerializer):
@@ -101,6 +124,10 @@ class CollectibleItemSerializer(PositionsSerializer):
         if not value.startswith('https://'):
             raise serializers.ValidationError(f'Incorrect url')
         return value
+
+class SubscribeSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ['athlete_id', 'coach_id']
 
 
 
