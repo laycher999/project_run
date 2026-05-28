@@ -136,7 +136,7 @@ class RunStopViewSet(BaseRunAction):
         distance = self.score_run_distance(positions)
         run.distance = distance
         run.run_time_seconds = self.score_run_time(positions)
-        run.speed = round(positions.aggregate(Avg('speed'))['speed__avg'], 2)
+        run.speed = round(positions.aggregate(Avg('speed'), default=0)['speed__avg'], 2)
         run.save()
         data['distance'] = run.distance
 
