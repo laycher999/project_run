@@ -114,6 +114,24 @@ class ChallengesSerializer(serializers.ModelSerializer):
         model = Challenges
         fields = ['full_name', 'athlete']
 
+class ChallengeSummarySerializer(serializers.ModelSerializer):
+    name_to_display = serializers.CharField(source='full_name', read_only=True)
+    athletes = serializers.SerializerMethodField()
+    class Meta:
+        model = Challenges
+        fields = ['name_to_display', 'athletes']
+
+
+    def get_athletes(self, obj):
+        return [{
+            'id': obj.athlete.id,
+            'full_name': f"{obj.athlete.first_name} {obj.athlete.last_name}",
+            'username': obj.athlete.username
+        }]
+
+
+
+
 
 class CollectibleItemSerializer(PositionsSerializer):
     class Meta(PositionsSerializer.Meta):
@@ -125,6 +143,7 @@ class CollectibleItemSerializer(PositionsSerializer):
         if not value.startswith('https://'):
             raise serializers.ValidationError(f'Incorrect url')
         return value
+
 
 class SubscribeSerializer(serializers.ModelSerializer):
     class Meta:

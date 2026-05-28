@@ -5,19 +5,22 @@ from rest_framework.routers import DefaultRouter
 from debug_toolbar.toolbar import debug_toolbar_urls
 
 from app_run.views import company_details, AthleteInfoViewSet, ChallengesViewSet, PositionsViewSet, \
-    CollectibleItemViewSet, UploadFileViewSet, SubscribeViewSet
+    CollectibleItemViewSet, UploadFileViewSet, SubscribeViewSet, ChallengesSummaryViewSet
 from app_run.views import RunViewSet, UserViewSet, RunStartViewSet, RunStopViewSet
 
 router = DefaultRouter()
 routes = [
-           ('runs', RunViewSet),
-           ('users', UserViewSet),
-           ('challenges', ChallengesViewSet),
-           ('positions', PositionsViewSet),
-           ('collectible_item', CollectibleItemViewSet)
+    ('runs', RunViewSet),
+    ('users', UserViewSet),
+    ('challenges', ChallengesViewSet),
+    ('positions', PositionsViewSet),
+    ('collectible_item', CollectibleItemViewSet),
            ]
 for prefix, viewset in routes:
     router.register(f'api/{prefix}', viewset)
+
+
+router.register('api/challenges_summary', ChallengesSummaryViewSet, 'challenges-summary')
 
 urlpatterns = [
     path('', include(router.urls)),

@@ -13,7 +13,7 @@ from rest_framework.views import APIView
 
 from .serializers import RunSerializer, UserSerializer, AthleteInfoSerializer, ChallengesSerializer, \
     PositionsSerializer, CollectibleItemSerializer, UserSerializerDetailed, CoachSerializerDetailed, \
-    AthleteSerializerDetailed
+    AthleteSerializerDetailed, ChallengeSummarySerializer
 from .models import Run, User, AthleteInfo, Challenges, Positions, CollectibleItem, Subscribe
 
 from geopy.distance import geodesic, Distance
@@ -67,7 +67,6 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
             if user and user.is_staff:
                 return CoachSerializerDetailed
             else:
-                print('JOPA')
                 return AthleteSerializerDetailed
         return super().get_serializer_class() # Если ни одно из условий не выполнено, вызываем базовую реализацию
 
@@ -309,3 +308,11 @@ class SubscribeViewSet(APIView):
 
         return Response(f'Athele({athlete_id}) subscribed Coach({coach_id})!', status=status.HTTP_200_OK)
 
+
+class ChallengesSummaryViewSet(viewsets.ModelViewSet):
+    serializer_class = ChallengeSummarySerializer
+
+    def get_queryset(self):
+        qs = Challenges.objects.select_related('athlete').values('full_name', 'athlete_id', 'athlete__first_name', 'athlete__last_name', 'athlete__username')
+        print(qs.values())
+        return Challenges.objects.select_related('athlete').all()
