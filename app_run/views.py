@@ -313,6 +313,5 @@ class ChallengesSummaryViewSet(viewsets.ModelViewSet):
     serializer_class = ChallengeSummarySerializer
 
     def get_queryset(self):
-        qs = Challenges.objects.select_related('athlete').values('full_name', 'athlete_id', 'athlete__first_name', 'athlete__last_name', 'athlete__username')
-        print(qs.values())
         return Challenges.objects.select_related('athlete').all()
+
